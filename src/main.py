@@ -27,11 +27,12 @@ def main():
         if plan:
             path = plan[0]
             block_t = 5
-            block_pos = path[block_t] if len(path) > block_t else None
+            block_pos = path[block_t + 1] if len(path) > block_t + 1 else None
             if block_pos:
                  agent.run(block_t=block_t, block_pos=block_pos)
             else:
                  agent.run()
 
 if __name__ == "__main__":
+
     main()
