@@ -11,6 +11,7 @@ class Env:
         g, c = [], {}
         with open(mf, 'r') as f:
             for r, line in enumerate(f.readlines()):
+                if not line.strip(): continue
                 row = []
                 for c_idx, char in enumerate(line.strip().split()):
                     pos = (r, c_idx)
@@ -30,7 +31,12 @@ class Env:
     def get_cost(self, pos): return self.costs.get(pos, 1)
 
     def is_obs(self, pos, t):
-        if self.grid[pos[0]][pos[1]] == 1: return True
+        r, c = pos
+        # This safety check fixes the crash on the large map
+        if r >= len(self.grid) or c >= len(self.grid[r]):
+            return True # Treat anything out of bounds as an obstacle
+    
+        if self.grid[r][c] == 1: return True
         for _, sched in self.dyn_obs.items():
             path = sched['path']
             idx = t % len(path) if sched.get('loop') else min(t, len(path) - 1)
@@ -44,4 +50,5 @@ class Env:
             np = (r + dr, c + dc)
             if 0 <= np[0] < self.h and 0 <= np[1] < self.w:
                 ngh.append(np)
+
         return ngh
