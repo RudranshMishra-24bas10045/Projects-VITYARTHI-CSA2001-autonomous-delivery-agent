@@ -1,6 +1,7 @@
 import argparse, os
 from src.env import Env
 from src.agent import Agent
+# This is the fully updated main.py with all features
 
 def main():
     p = argparse.ArgumentParser()
@@ -16,14 +17,17 @@ def main():
         print(f"--- STATIC comparison: maps/{args.map}.txt ---")
         env = Env(f'maps/{args.map}.txt')
         from src.planner import ucs, astar
+        
         print("\nUCS run:")
         ucs_res = ucs(env, env.start, args.fuel)
         if ucs_res[0]: print(f"  Path OK. Cost: {ucs_res[1]}, Nodes: {ucs_res[2]}")
         else: print("  UCS Fail.")
+        
         print("\nA* run:")
         astar_res = astar(env, env.start, args.fuel)
         if astar_res[0]: print(f"  Path OK. Cost: {astar_res[1]}, Nodes: {astar_res[2]}")
         else: print("  A* Fail.")
+        
         if args.sim and astar_res[0]:
             agent = Agent(env, fuel=args.fuel); agent.path = astar_res[0]; agent.history = agent.path
 
@@ -48,6 +52,7 @@ def main():
             for obs_id, sched in env.dyn_obs.items():
                 path = sched['path']
                 dyn_obs_paths[obs_id] = [tuple(path[t % len(path) if sched.get('loop') else min(t, len(path)-1)]) for t in range(max_t)]
+        
         sim = Sim(env, agent.history, dyn_obs_paths)
         sim.run(fname=f"{args.scenario}_{args.map if args.scenario=='static' else 'sim'}.gif")
 
