@@ -2,21 +2,29 @@ import time, heapq, random
 
 def ucs(env, sp, fuel):
     st = time.time()
-    q = [(0, sp, [sp])]
+    q = [(0, sp, [sp])]  
     visited = set()
     exp_nodes = 0
+
     while q:
         gc, pos, path = heapq.heappop(q)
         exp_nodes += 1
-        if pos == env.goal: return path, gc, exp_nodes, (time.time() - st) * 1000
-        if pos in visited: continue
+
+        if pos == env.goal:
+            return path, gc, exp_nodes, (time.time() - st) * 1000
+
+        if pos in visited:
+            continue
         visited.add(pos)
+
+        
         for n_pos in env.get_neighbors(pos):
-            if not env.is_obs(n_pos, 0): # Static check only
+            if not env.is_obs(n_pos, 0):
                 mc = env.get_cost(n_pos)
                 ngc = gc + mc
                 if ngc <= fuel and n_pos not in visited:
                     heapq.heappush(q, (ngc, n_pos, path + [n_pos]))
+    
     return None, 0, exp_nodes, (time.time() - st) * 1000
 
 def astar(env, sp, fuel):
