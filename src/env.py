@@ -16,7 +16,7 @@ class Env:
                 for c_idx, char in enumerate(line.strip().split()):
                     pos = (r, c_idx)
                     if char.isdigit(): row.append(0); c[pos] = int(char)
-                    elif char == '#': row.append(1) # Wall
+                    elif char == '#': row.append(1)
                     elif char == 'S': row.append(2); c[pos] = 1
                     elif char == 'G': row.append(3); c[pos] = 1
                 g.append(row)
@@ -32,10 +32,7 @@ class Env:
 
     def is_obs(self, pos, t):
         r, c = pos
-        # This safety check fixes the crash on the large map
-        if r >= len(self.grid) or c >= len(self.grid[r]):
-            return True # Treat anything out of bounds as an obstacle
-    
+        if r >= len(self.grid) or c >= len(self.grid[r]): return True
         if self.grid[r][c] == 1: return True
         for _, sched in self.dyn_obs.items():
             path = sched['path']
@@ -50,5 +47,4 @@ class Env:
             np = (r + dr, c + dc)
             if 0 <= np[0] < self.h and 0 <= np[1] < self.w:
                 ngh.append(np)
-
         return ngh
